@@ -441,7 +441,7 @@
         if(window.BMapLib&&BMapLib.LuShu){
           _init();
         }else{
-          $.getScript("/static/LuShu.js",_init)
+          $.getScript("./static/LuShu.js",_init)
         }
       }
 
@@ -652,9 +652,9 @@
           var point = new BMap.Point(_lng,_lat);
           var icon;
           if(!this.checkStationMakerList(busItem.getBusStation(i).name,true,busItem.name)){
-            icon = new BMap.Icon("./static/point.svg",new BMap.Size(0,0));
+            icon = new BMap.Icon("../../static/point.svg",new BMap.Size(0,0));
           }else{
-            icon = new BMap.Icon("./static/point.svg",new BMap.Size(14,14));
+            icon = new BMap.Icon("../../static/point.svg",new BMap.Size(14,14));
             window.xx = window.xx || 0;
             window.xx+=1;
           }

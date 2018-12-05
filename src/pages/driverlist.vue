@@ -80,7 +80,7 @@
                 <img :src="scope.row.photoPath">
               </div>
               <div v-else class="avatartablerowfacediv">
-                <img src="/static/imageDef.jpg">
+                <img src="../../static/imageDef.jpg">
               </div>
               <div class="avatartablerownamediv">
                 <el-tag size="medium">{{ scope.row.name }}</el-tag>
@@ -141,7 +141,7 @@
             <img :src="scope.row.licensePath">
           </div>
           <div v-else class="avatartablerowcarddiv">
-            <img src="/static/imageDef.jpg">
+            <img src="../../static/imageDef.jpg">
           </div>
         </template>
       </el-table-column>
@@ -154,7 +154,7 @@
             <img :src="scope.row.healthPath">
           </div>
           <div v-else class="avatartablerowmedicadiv">
-            <img src="/static/imageDef.jpg">
+            <img src="../../static/imageDef.jpg">
           </div>
         </template>
       </el-table-column>
@@ -370,9 +370,9 @@
           grade: '评级分数',
           complaintCount: '受到投诉次数',
           idcard: '131002199408204046',
-          photoPath: '/static/imageDef.jpg',
-          licensePath: '/static/imageDef.jpg',
-          healthPath: '/static/imageDef.jpg',
+          photoPath: '../../static/imageDef.jpg',
+          licensePath: '../../static/imageDef.jpg',
+          healthPath: '../../static/imageDef.jpg',
           remark: '测试测试',
           address: '上海市普陀区金沙江路'
         }],
@@ -410,7 +410,7 @@
         imageFaceUrl: '',
         imageCardUrl: '',
         imageMedicalUrl: '',
-        imageDef:'/static/imageDef.jpg'
+        imageDef:'../../static/imageDef.jpg'
 
 
 

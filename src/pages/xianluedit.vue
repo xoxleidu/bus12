@@ -537,7 +537,7 @@
             return false;
           }
 
-          var myIcon = new BMap.Icon("/static/point.svg", new BMap.Size(14,14));
+          var myIcon = new BMap.Icon("../../static/point.svg", new BMap.Size(14,14));
           var label = new BMap.Label(data.CarCard,{position:pt,offset:new BMap.Size(50,-1)});
           label.setZIndex(1);
           label.setStyle({border:"none",background:"none"});

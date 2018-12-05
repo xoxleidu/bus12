@@ -80,10 +80,10 @@
 
 
                       <div v-if="gps.stationState == 1">
-                        <div class='weui-cell-event'><img src='/static/buscome.png' class='buscomegoimg' /></div>
+                        <div class='weui-cell-event'><img src='../../static/buscome.png' class='buscomegoimg' /></div>
                       </div>
                       <div v-if="gps.stationState == 0">
-                        <div class='weui-cell-event-on'><img src='/static/busgo.png' class='buscomegoimg' /></div>
+                        <div class='weui-cell-event-on'><img src='../../static/busgo.png' class='buscomegoimg' /></div>
                       </div>
 
                     </div>
@@ -117,10 +117,10 @@
 
                       <div v-for="gps,index in car.busList" :key="index">
                         <div v-if="gps.stationState = 0">
-                          <div class='weui-cell-event-heng'><img src='/static/buscome.png' class='buscomegoimg' /></div>
+                          <div class='weui-cell-event-heng'><img src='../../static/buscome.png' class='buscomegoimg' /></div>
                         </div>
                         <div v-if="gps.stationState = 1">
-                          <div class='weui-cell-event-on'><img src='/static/busgo.png' class='buscomegoimg' /> 大约分钟到站 </div>
+                          <div class='weui-cell-event-on'><img src='../../static/busgo.png' class='buscomegoimg' /> </div>
                         </div>
 
                       </div>
