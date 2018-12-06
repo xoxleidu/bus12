@@ -817,13 +817,13 @@
 <style lang="less">
   @import url("../../static/font-awesome-4.7.0/less/font-awesome");
 
-  .el-tree-node{ position:relative;background: #efefef;
-    .el-tree-node__content{ height:32px; line-height: 32px; font-size:14px; border-bottom:1px dotted #e8e8e8; color:#324157;}
+  .el-tree-node{ position:relative;background: #ededed;
+    .el-tree-node__content{ height:32px; line-height: 32px; font-size:14px; border-bottom:1px dotted #e8e8e8; color:#1f2d3d;}
     .el-checkbox__input{ line-height: 32px;}
     .el-checkbox__inner{ width: 16px; height:16px; border:1px solid #888;}
   }
   .hide{ display: none;}
-  .XL-tree{position:absolute;left:0;top:0;bottom:0;width:200px; overflow-y:auto;  z-index: 3;
+  .XL-tree{position:absolute;left:0;top:0;bottom:0;width:200px; overflow-y:auto;  z-index: 3;background-color: midnightblue;
     .controller{position:absolute; right:10px; top:-2px;
       .el-button-group{}
     }

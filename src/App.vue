@@ -1,34 +1,51 @@
 <template>
   <div id="app" > <!--导航条-->
-    <el-menu class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff"
-             active-text-color="#ffd04b">
-      <el-menu-item index="1">
-        <router-link to="/busjiankong">车辆监控</router-link>
+    <el-menu class="el-menu-demo" mode="horizontal" background-color="#1f2d3d" text-color="#fff"
+             active-text-color="#85ce61" router>
+
+        <el-menu-item index="/busjiankong" class="el-menu-item-demo">
+          <i class="fa fa-video-camera" aria-hidden="true"></i>
+          <span>车辆监控</span>
+        </el-menu-item>
+
+
+
+
+      <el-menu-item index="/linejiankong" class="el-menu-item-demo">
+        <i class="fa fa-exchange" aria-hidden="true"></i>
+
+        <span>线路监控</span>
       </el-menu-item>
-      <el-menu-item index="2">
-        <router-link to="/linejiankong">线路监控</router-link>
+      <el-menu-item index="/guiji">
+        <i class="fa fa-play-circle" aria-hidden="true"></i>
+        <span>轨迹回放</span>
       </el-menu-item>
-      <el-menu-item index="3">
-        <router-link to="/guiji">轨迹回放</router-link>
+      <el-menu-item index="/xianluyanshi" class="el-menu-item-demo">
+        <i class="fa fa-random"></i>
+        <span>线路演示</span>
       </el-menu-item>
-      <el-menu-item index="4">
-        <router-link to="/xianluyanshi">线路演示</router-link>
+      <el-menu-item index="/xianluedit" class="el-menu-item-demo">
+        <i class="fa fa-align-justify" aria-hidden="true"></i>
+        <span>线路管理</span>
       </el-menu-item>
-      <el-menu-item index="5">
-        <router-link to="/xianluedit">线路管理</router-link>
+      <el-menu-item index="/driverlist" class="el-menu-item-demo">
+        <i class="fa fa-address-card" aria-hidden="true"></i>
+        <span>驾驶员管理</span>
       </el-menu-item>
-      <el-menu-item index="6">
-        <router-link to="/driverlist">驾驶员管理</router-link>
+      <el-menu-item index="/buslist" class="el-menu-item-demo">
+        <i class="fa fa-bus"></i>
+        <span>车辆管理</span>
       </el-menu-item>
-      <el-menu-item index="7">
-        <router-link to="/buslist">车辆管理</router-link>
+      <el-menu-item index="/test" class="el-menu-item-demo">
+        <i class="fa fa-bus"></i>
+        <span>测试页面</span>
       </el-menu-item>
       <!--<el-submenu index="8">-->
         <!--<template slot="title">我的工作台</template>-->
       <!--</el-submenu>-->
-      <el-menu-item index="9"><a href="http://localhost:8080/buscenter/swagger-ui.html#/" target="_blank">接口文档</a></el-menu-item>
+      <el-menu-item class="el-menu-item-demo" index=""><a href="http://www.baidu.com" target="_blank">接口文档</a></el-menu-item>
     </el-menu>
-    <br>
+
     <router-view class="mainX" v-bind:style="{height: myHeight}"></router-view>
   </div>
 </template>
@@ -37,12 +54,13 @@
   export default {
     data () {
       return {
-        myHeight: (window.innerHeight - 100) + 'px'
+        myHeight: (window.innerHeight - 90) + 'px'
       }
     }
   }
 </script>
-<style>
+<style lang="less">
+  @import url("../static/font-awesome-4.7.0/less/font-awesome.less");
   body{
     font-family: "Microsoft YaHei";
   }
@@ -52,10 +70,19 @@
 
   .mainX {
     position: relative;
+    margin-top: 10px;
   }
 
   a {
     text-decoration: none;
+  }
+
+  .el-menu-item-demo:hover {
+    background-color: #85ce61 !important;
+    color: #1f2d3d !important;
+  }
+  .fa {
+    color: #f2f6fc;
   }
 </style>
 

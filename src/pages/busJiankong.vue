@@ -38,7 +38,12 @@
           <!--</div>-->
         </div>
 
-
+        <div class="children video-list" style="line-height: 30px;color:#FFF;">
+          <h3 v-for="i in 8">
+            <input type="checkbox" @change.navtive="(e)=>{viedeoCheck(e,testData,i)}" />
+            <i class="el-icon-fa-video-camera"></i> 摄像头{{i}}
+          </h3>
+        </div>
 
         <el-row v-for="line in lineList"  :key="line.id" class="line-list">
 
@@ -57,18 +62,22 @@
             </h2>
             <div class="children" v-if="line.id">
               <div class="tree-node" v-for="car,index in line.busList"   :id="'id'+car.lineId" :key="index">
-                <h2 @dblclick="(e)=>{positionCar(e,car)}">
-                  <span @click="(e)=> {treeToggle(e)}"  class="el-tree-node__expand-icon"></span>
+
+                <h2 @dblclick="(e)=>{positionCar(e,car)}" >
+                  <span class="el-tree-node__expand-icon"></span>
                   <input type="checkbox" @change="(e)=>{treeCheck(e,car)}" @click.stop="" />
                   <i :class="(car.upDown==1?'el-icon-fa-level-down ':'el-icon-fa-level-up ') + 'updown'"></i>
                   <i class="el-icon-fa-bus"></i>
-                  冀R{{car.vehicleNumber}}  {{car.speed}}km/h
+                  <span @click="(e)=> {treeToggle(e)}">冀R{{car.vehicleNumber}}  {{car.speed}}km/h</span>
                 </h2>
+
                 <div class="children video-list">
-                  <!--<h3 v-for="i in 8"><input type="checkbox" @change.navtive="(e)=>{viedeoCheck(e,car,i)}" />-->
-                  <!--<i class="el-icon-fa-video-camera"></i> 摄像头{{i}}-->
-                  <!--</h3>-->
+                  <h3 v-for="i in 8">
+                    <input type="checkbox" @change.navtive="(e)=>{viedeoCheck(e,car,i)}" />
+                    <i class="el-icon-fa-video-camera"></i> 摄像头{{i}}
+                  </h3>
                 </div>
+
               </div>
             </div>
           </div>
@@ -86,17 +95,101 @@
         <!--</el-tree>-->
       </el-aside>
       <el-main v-bind:style="{height: myHeight}">
-        <div id="JK-map" class="mymap"></div>
+
+        <div class="JK-map">
+
+          <div class="status-window" :style="{bottom:showOverSpeedList?0:'auto'}">
+            <!-- 运营总量：{{carList.length}}<br>
+            运行车辆：<span style="color:#007ad4;">{{onlineCount}}</span><br>
+            离线车辆：<span style="color:#999;">{{offLineCarCount}}</span><br> -->
+
+            运营总量：739<br>
+            运行车辆：<span style="color:#85ce61;">{{onlineCount}}</span><br>
+            离线车辆：<span style="color:gold;">{{739-onlineCount}}</span><br>
+            超速车辆：<span style="color:red;font-weight: bold;"><!--{{overSpeedList.length}}-->23</span> <a href="javascript:;" @click="showOverSpeedList = !showOverSpeedList">[显示详细]</a>
+
+            <!--<ul v-if="showOverSpeedList">-->
+              <!--<li v-for="car in overSpeedList">-->
+                <!--<div class="overspeed-title">-->
+                  <!--<span>{{car.CarCard}}</span> {{car.GPSSpeed}} km/h-->
+
+                  <!--<div class="overspeed-right">-->
+                    <!--<a href="javascript:;" @click="car.showOverSpeed = !car.showOverSpeed" >详细</a>-->
+                    <!--<a href="javascript:;" @click="()=>{showOverSpeedCar(car)}" >定位</a>-->
+                  <!--</div>-->
+
+                <!--</div>-->
+
+                <!--<div v-if="car.showOverSpeed" class="overspeed-info">-->
+                  <!--<div class="item">-->
+                    <!--<strong>线路:</strong>{{lines[lines.dict[car.RouteId]].LineName}}-->
+                  <!--</div>-->
+                  <!--<div class="item">-->
+                    <!--<strong>车牌号:</strong>{{car.CarCard}}-->
+                  <!--</div>-->
+                  <!--<div class="item">-->
+                    <!--<strong>GPS 速度:</strong>{{car.GPSSpeed}}km/h-->
+                  <!--</div>-->
+                  <!--<div class="item">-->
+                    <!--<strong>上下行:</strong>{{car.UpDown == 1?"下行":"上行"}}</div>-->
+                  <!--<div class="item">-->
+                    <!--<strong>站点:</strong>{{getStation(car)}}</div>-->
+                  <!--<div class="item">-->
+                    <!--<strong>下一站:</strong>{{getNextStation(car)}}-->
+                  <!--</div>-->
+                <!--</div>-->
+              <!--</li>-->
+            <!--</ul>-->
+
+          </div>
+
+
+
+          <div id="JK-map" class="mymap"></div>
+
+
+          <transition-group tag="div" name="JK-video" :class="$route.name=='shipin'?'shipin-video':'JK-video'">
+            <div class="JK-video-item"
+                 v-for="(video,index) in videoList"
+                 :style="
+        $route.name=='shipin'?
+        {top:(Math.floor(index/4)*33.33)+'%',left:(parseInt(index%4)*25)+'%'}:{bottom:(parseInt(index%3)*33.33)+'%',right:(parseInt(index/3)*50)+'%'}
+        "
+                 v-bind:key="video.id">
+              <div class="JK-video-container">
+                <div class="video-item">
+                  <object :id="'v'+video.id" classid="clsid:DB5D6116-F923-4aa0-83D9-D6538F55E174" name="showvideo" style="width:100%;height:100%;">
+                    <param name="_Version" value="65536">
+                    <param name="_ExtentX" value="10583">
+                    <param name="_ExtentY" value="9260">
+                    <param name="_StockProps" value="0">
+                  </object>
+                </div>
+                <el-button class="close" @click="removeVideo(video)" type="primary" icon="fa-times" size="small"></el-button>
+                <div class="info">
+                  {{video.videoName}}
+                </div>
+              </div>
+            </div>
+          </transition-group>
+
+
+
+
+
+
+
+        </div>
+
       </el-main>
     </el-container>
     <el-footer>
 
       <div class="warning-tips">
 
-
-        <el-row :gutter="24">
+        <el-row :gutter="10">
           <el-col :span="8">
-            <dl>
+            <dl class="elcolw">
               <dt>大间距</dt>
               <dd>
                 <span v-for="djj in YujingData.dajianju">
@@ -108,7 +201,7 @@
             </dl>
           </el-col>
           <el-col :span="8">
-            <dl>
+            <dl class="elcolw">
               <dt>双车</dt>
               <dd>
                 <span v-for="sc in YujingData.shuangche">
@@ -119,8 +212,8 @@
             </dl>
           </el-col>
 
-          <el-col :span="8" >
-            <dl>
+          <el-col :span="8">
+            <dl class="elcolw">
               <dt>滞站</dt>
               <dd style="height:45px;overflow-y:auto;">
                 <span v-for="item in YujingData.zhizhan">
@@ -158,9 +251,18 @@
 
     data () {
       return {
+        showOverSpeedList:false,
+
+        testData:{
+          CarSign:'1105'
+        },
+        videoList:[],
+
         myHeight: (window.innerHeight - 220) + 'px',
         busList:[
-          {a:2},
+          {children: [{
+              videoList:''
+            }]},
         ],
         reqList:[],
         busLineName:null,
@@ -175,6 +277,25 @@
         YujingData:[],
         carMarkerWindow:{},
         timer:null
+      }
+    },
+    computed:{
+      onlineCount:function(){
+        //var count =  this.carList.length - this.offLineCarCount;
+        var count =  700 - 20;
+        count = count>=0?count:0;
+        return count;
+      },
+      overSpeedList:function(){
+        var list = [];
+        this.lines.map((line)=>{
+          if(line.children){
+            list = list.concat(line.children.filter((car)=>{
+              return car.GPSSpeed>=40;
+            }));
+          }
+        })
+        return list
       }
     },
     mounted(){
@@ -209,7 +330,9 @@
           //返回线路赋值
           this.$set(this.$data,"lineList",response.result);
         }
+
         this.initReq();
+
       })
 
 
@@ -224,19 +347,21 @@
       initReq(){
         window.aa = this.lineList;
         //初始化轮询
+
         this.timer = setInterval(()=>{
           var runMethods = Array.from(this.openLine.values());
           runMethods.map(runMethod=>{
-
             getBusList(runMethod).then(response => {
               if (response.code === '000') {
                 var busList  = response.result;
                 var runMethod = busList[0].runMethod;
                 var line = this.lineList.find(line=>{return line.runMethod = runMethod;});
+
                 if(!line){
                   return false;
                 }
                 for(var license in busList){
+
                   this.updateBus(line,busList[license])
                 }
                 // this.$set(line,"busList",response.result);
@@ -246,54 +371,60 @@
             })
           });
 
+          //预警信息 注意开启
 
-          getBusYujing().then(Response => {
-            if(Response.code === '000') {
-
-              // var dajianju = {};
-              // var shuangche = {};
-              // var zhizhan = {};
-              // Response.result.dajianju.map(item=>{
-              //   dajianju[item.runMethod] = "";
-              // });
-              // Response.result.shuangche.map(item=>{
-              //   //shuangche[item.lineId] = "";
-              //   shuangche[item.runMethod] = "";
-              // });
-              // Response.result.zhizhan.map(item=>{
-              //   zhizhan[item.runMethod] = "";
-              // });
-              // var dajianjuArr = [];
-              // var shuangcheArr = [];
-              // var zhizhanArr = [];
-              // for(var key1 in dajianju){
-              //   //dajianjuArr.push({'dajianju':key1});
-              //   dajianjuArr.push(key1);
-              // }
-              // for(var key2 in shuangche){
-              //   shuangcheArr.push(key2);
-              // }
-              // for(var key3 in zhizhan){
-              //   zhizhanArr.push(key3);
-              // }
-              // //console.log(dajianjuArr);
-              //
-              // this.$set(this.$data.YujingData,"dajianju",dajianjuArr);
-              // this.$set(this.$data.YujingData,"shuangche",shuangcheArr);
-              // this.$set(this.$data.YujingData,"zhizhan",zhizhanArr);
-
-              this.$set(this.$data.YujingData,"dajianju",Response.result.dajianju);
-              this.$set(this.$data.YujingData,"shuangche",Response.result.shuangche);
-              this.$set(this.$data.YujingData,"zhizhan",Response.result.zhizhan);
-            }
-          }) ;
+          // getBusYujing().then(Response => {
+          //   if(Response.code === '000') {
+          //
+          //     // var dajianju = {};
+          //     // var shuangche = {};
+          //     // var zhizhan = {};
+          //     // Response.result.dajianju.map(item=>{
+          //     //   dajianju[item.runMethod] = "";
+          //     // });
+          //     // Response.result.shuangche.map(item=>{
+          //     //   //shuangche[item.lineId] = "";
+          //     //   shuangche[item.runMethod] = "";
+          //     // });
+          //     // Response.result.zhizhan.map(item=>{
+          //     //   zhizhan[item.runMethod] = "";
+          //     // });
+          //     // var dajianjuArr = [];
+          //     // var shuangcheArr = [];
+          //     // var zhizhanArr = [];
+          //     // for(var key1 in dajianju){
+          //     //   //dajianjuArr.push({'dajianju':key1});
+          //     //   dajianjuArr.push(key1);
+          //     // }
+          //     // for(var key2 in shuangche){
+          //     //   shuangcheArr.push(key2);
+          //     // }
+          //     // for(var key3 in zhizhan){
+          //     //   zhizhanArr.push(key3);
+          //     // }
+          //     // //console.log(dajianjuArr);
+          //     //
+          //     // this.$set(this.$data.YujingData,"dajianju",dajianjuArr);
+          //     // this.$set(this.$data.YujingData,"shuangche",shuangcheArr);
+          //     // this.$set(this.$data.YujingData,"zhizhan",zhizhanArr);
+          //
+          //     this.$set(this.$data.YujingData,"dajianju",Response.result.dajianju);
+          //     this.$set(this.$data.YujingData,"shuangche",Response.result.shuangche);
+          //     this.$set(this.$data.YujingData,"zhizhan",Response.result.zhizhan);
+          //   }
+          // }) ;
 
         },3000)
+
+
+
       },
 
       updateBus(line,busData){
         var that = this;
         var bus = line.busList.find(item=>{return item.vehicleNumber == busData.vehicleNumber});
+
+        //console.log(bus)
         if(!bus){
           return false;
         }
@@ -334,6 +465,7 @@
 
 
 
+
       },
 
       //监控视频
@@ -366,7 +498,8 @@
               _CarSign = "0"+_CarSign;
             }
 
-            $("#v"+data.id)[0].SetDeviceInfo(123, "", _CarSign, 5556, window.GJCONFIG.videoIp, window.GJCONFIG.videoPort, "", "");
+            //$("#v"+data.id)[0].SetDeviceInfo(123, "", _CarSign, 5556, window.GJCONFIG.videoIp, window.GJCONFIG.videoPort, "", "");
+            $("#v"+data.id)[0].SetDeviceInfo(123, "", _CarSign, 5556, '60.10.59.86', 17891, "", "");
             setTimeout(()=>{
               $("#v"+data.id)[0].OpenVideo(data.i,1)
             },1000);
@@ -376,7 +509,9 @@
 
       },
       viedeoCheck(e,data,i){
-
+        console.log(e)
+        console.log(data)
+        console.log(i)
         data[data.CarSign+i] = data[data.CarSign+i] || {
           id:data.CarSign+i,
           CarSign:data.CarSign,
@@ -431,6 +566,9 @@
         })
       },
 
+      treeToggless(e){
+        alert(12)
+      },
 
       //点击线路-加载线路下的车辆信息
       treeToggle(e,line){
@@ -442,8 +580,15 @@
             if (response.code === '000') {
               //返回车辆信息赋值
               this.$set(line,"busList",response.result);
+              // for (var i in line.busList){
+              //
+              //   this.$set(line.busList[i],"videoList",response.result);
+              // }
+
             }
             this.openLine.add(line.runMethod);
+
+
           });
 
         }
@@ -587,8 +732,7 @@
 </script>
 <style lang="less">
   .mymap{
-    width: 100%;
-    height: 100%;
+    width: 100%;height: 100%;
   }
   .line {
     font-weight: bold;
@@ -600,7 +744,9 @@
     background-color: #E9EEF3;
     color: #333;
     text-align: center;
-
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid #f5f3f0;
   }
   .grid-content {
     border-radius: 4px;
@@ -627,19 +773,33 @@
     text-align: center;
     line-height: 200px;
   }
-  .line-list{
 
-    text-align: left;
-    padding-left: 10px;
-    .children .tree-node{
 
-      h2{ color:#00fff0;}
+  .JK-map{position:relative;width: 100%;height: 100%;}
+  .JK-video{ position: absolute;    right: 0;    bottom: 0;    width: 600px;    top: 0;
+    .JK-video-item{ width:50%; height:33.33%;position:absolute;}
+    .JK-video-container{position:absolute; width: 100%;height:100%;
+
     }
   }
+  .video-item{position:absolute; width: 100%;top:30px;bottom:0; background: #000;}
+  .JK-video-item{ position:absolute; z-index:0;  border-bottom:1px solid rgba(255,255,255,.3); width: 300px; height:250px; background:#fff;}
+  .JK-video-container{ text-align: center;
+    .close{position:absolute; z-index:3;right:0;top:0; background:rgba(255,255,255,.2); color:#FFF; border:none; border-radius:0; opacity:0;transition:all .2s;z-index:200; height:30px;
+      &:hover{ background:rgba(255,255,255,.3);}
+    }
+    .info{position:absolute;z-index:3; height:30px; line-height:30px;background:rgba(0,0,0,.5); color:rgba(255,255,255,.7); text-align:center; top:0;left:0; right:0;}
+    &:hover{
+      .close{opacity:1;}
+    }
+  }
+
   .tree-node{ height:30px; overflow:hidden; color:#aaa; border-top:1px solid #162433;
     .badge{ background:; color:#fff;position:absolute; right:5px;top:4px; border-radius:100%; width:20px; height:20px; line-height:20px; text-align:center; font-size:12px;}
     h2{ font-weight:normal;font-size:14px; margin:0; height:30px; line-height:30px; cursor:pointer;position:relative;
-      input[type=checkbox]{vertical-align:-.15em;}
+      input[type=checkbox]{vertical-align:-.15em;
+      .divtext {color: #FFF;width: 100%;height: 20px;line-height: 20px;}
+      }
     }
     h2:hover,h2.selected{ background:#293c51; color:#FFF !important;}
     h2,h3{padding:0;margin:0;}
@@ -658,10 +818,51 @@
       &>h2>.el-tree-node__expand-icon{transform:rotate(90deg);}
     }
   }
-  .warning-tips{position:fixed; z-index: 10; bottom:0px;background: #f5f3f0; height:120px;  border: 1px solid #dedede;left:10px;right:10px;
-    dl,dt,dd{margin:0;padding:0; font-size: 14px;font-weight: bold;color: midnightblue}
-    dl{padding:10px;}
+  .JK-video-item {
+    transition: all .5s;
+  }
+  .JK-video-enter, .JK-video-leave-to
+    /* .list-complete-leave-active for below version 2.1.8 */ {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .JK-video-leave-active {
+    position: absolute;
+  }
+  .infowindow-list{ font-size:14px;
+    .item{ border-bottom:1px dotted #ddd; color:#888; padding:3px 0;
+      strong{ color:#333;  padding-right:1em; width:5em; display:inline-block;}
+    }
+  }
+  .offline .el-checkbox__label{ color:#888;}
+  .online .el-checkbox__label{ color:#09a215;}
+  .line-list{
+    text-align: left;
+    padding-left: 10px;
+    .children .tree-node{
+      h2{ color:#f2f6fc;}
+    }
+  }
+  .shipin-video{
+    .JK-video-item{ width:25%; height:33.3333%;}
+  }
+  .warning-tips{position:fixed; z-index: 10; bottom:0px;   left:8px;right:8px;
+    .elcolw{background: #f5f3f0;height:130px;margin: 0px;padding: 0px;}
+    dl,dt,dd{margin:0;padding:0; font-size: 14px;font-weight: bold;color: #1f2d3d;}
+    dt{background-color: #dedede; line-height: 26px;height: 26px;padding-left: 10px;}
+    dl{padding:10px; }
     dd{padding-top:8px;}
     dd span{ background:#ff4040; border-radius: 3px; font-size:14px; display: inline-block; padding:1px 5px; margin-right:3px;}
+  }
+  .status-window{border-right:1px solid #999;border-bottom:1px solid #999;position:absolute; z-index:999; background:rgba(0,0,0,0.6);color:#f2f6fc;text-align:left;line-height:24px;left:10px;top:10px;bottom:10px;overflow:auto; padding:10px; font-size:12px;
+    a{color:#FFF;}
+    ul,li{list-style-type: none;padding:0;}
+    ul{}
+    .overspeed-info{background:#ddd; padding:8px;}
+    .overspeed-title{ position:relative; width:215px; border-bottom:1px solid #ddd;padding: 2px 0;
+      span{ display: inline-block; width:90px;}
+      .overspeed-right{position:absolute;right:0; top:2px;}
+
+    }
   }
 </style>

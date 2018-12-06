@@ -8,6 +8,7 @@ import xianluyanshi from  '@/pages/xianluyanshi'
 import xianluedit from  '@/pages/xianluedit'
 import driverlist from  '@/pages/driverlist'
 import buslist from  '@/pages/buslist'
+import test from  '@/pages/test'
 
 Vue.use(Router)
 
@@ -49,6 +50,11 @@ export default new Router({
       path: '/buslist',
       name: '车辆管理',
       component: buslist
+    },
+    {
+      path: '/test',
+      name: '测试页面',
+      component: test
     }
   ]
 })
