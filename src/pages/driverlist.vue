@@ -1,6 +1,12 @@
 <template>
   <div>
     <el-row class="el-row-left">
+      <el-col :span="2" v-if="moreSelect" class="deleteAllButton">
+        <el-button type="danger" @click="toggleSelection(multipleSelection)">删除选中项</el-button>
+      </el-col>
+      <el-col :span="2" v-if="moreSelect" class="deleteAllButton">
+        <el-button @click="toggleSelection()">取消选择</el-button>
+      </el-col>
       <el-col :span="6">
         <el-input placeholder="请输入内容" v-model="inputSearch" @keyup.enter.native="onSubmitSearch"
                   class="input-with-select">
@@ -14,7 +20,7 @@
         <el-button type="success" icon="el-icon-search" @click="onSubmitSearch"></el-button>
       </el-col>
       <el-col :span="2">
-        <el-button type="primary" @click="onSubmitAdd">Add</el-button>
+        <el-button type="primary" @click="onSubmitAdd">添加驾驶员信息</el-button>
       </el-col>
       <el-col :span="2">
         <el-button type="primary" @click="onSubmitClear">刷新</el-button>
@@ -49,11 +55,16 @@
       </el-table-column>-->
 
       <el-table-column
-        prop="id"
-        label="ID"
-        sortable
-        width="60">
+        type="selection"
+        width="55">
       </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="id"-->
+        <!--label="ID"-->
+        <!--sortable-->
+        <!--width="60">-->
+      <!--</el-table-column>-->
+
       <!--<el-table-column-->
       <!--prop="date"-->
       <!--label="日期"-->
@@ -280,22 +291,69 @@
         <el-row :gutter="24">
           <el-col :span="2">员工号</el-col>
           <el-col :span="6">
-            <el-input v-model="temp.employeeId" :disabled="true" />
+            <el-input v-model="temp.employeeId" :disabled="dialogStatus==='create'? false : true" />
           </el-col>
           <el-col :span="3">所属公司</el-col>
           <el-col :span="6">
-            <el-select v-model="temp.companyId" placeholder="please select your zone">
-              <el-option label="Zone one" value="0"/>
-              <el-option label="Zone two" value="1"/>
-              <el-option label="Zone three" value="2"/>
-              <el-option label="Zone fore" value="3"/>
+            <el-select v-model="temp.companyId" placeholder="请选择公司">
+              <el-option label="一公司" value="一公司"/>
+              <el-option label="一公司备用" value="一公司备用"/>
+              <el-option label="二公司" value="二公司"/>
+              <el-option label="二公司备用" value="二公司备用"/>
+              <el-option label="三公司" value="三公司"/>
+              <el-option label="三公司备用" value="三公司备用"/>
+              <el-option label="四公司" value="四公司"/>
+              <el-option label="四公司备用" value="四公司备用"/>
+              <el-option label="班线公司" value="班线公司"/>
+              <el-option label="办公室" value="办公室"/>
+              <el-option label="后勤" value="后勤"/>
+              <el-option label="警车" value="警车"/>
+              <el-option label="票务" value="票务"/>
+              <el-option label="维修中心" value="维修中心"/>
             </el-select>
           </el-col>
           <el-col :span="3">所属路线</el-col>
           <el-col :span="4">
-            <el-select v-model="temp.inchargeLine" placeholder="please select your zone">
-              <el-option label="Zone one" value="1"/>
-              <el-option label="Zone two" value="2"/>
+            <el-select v-model="temp.inchargeLine" placeholder="请选择线路">
+              <el-option label="1路" value="1"/>
+              <el-option label="2路" value="2"/>
+              <el-option label="3路" value="3"/>
+              <el-option label="4路" value="4"/>
+              <el-option label="5路" value="5"/>
+              <el-option label="6路" value="6"/>
+              <el-option label="7路" value="7"/>
+              <el-option label="8路" value="8"/>
+              <el-option label="9路" value="9"/>
+              <el-option label="10路" value="10"/>
+              <el-option label="11路" value="11"/>
+              <el-option label="12路" value="12"/>
+              <el-option label="13路" value="13"/>
+              <el-option label="14路" value="14"/>
+              <el-option label="15路" value="15"/>
+              <el-option label="16路" value="16"/>
+              <el-option label="17路" value="17"/>
+              <el-option label="18路" value="18"/>
+              <el-option label="19路" value="19"/>
+              <el-option label="20路" value="20"/>
+              <el-option label="21路" value="21"/>
+              <el-option label="22路" value="22"/>
+              <el-option label="23路" value="23"/>
+              <el-option label="24路" value="24"/>
+              <el-option label="25路" value="25"/>
+              <el-option label="26路" value="26"/>
+              <el-option label="27路" value="27"/>
+              <el-option label="28路" value="28"/>
+              <el-option label="29路" value="29"/>
+              <el-option label="30路" value="30"/>
+              <el-option label="31路" value="31"/>
+              <el-option label="32路" value="32"/>
+              <el-option label="33路" value="33"/>
+              <el-option label="34路" value="34"/>
+              <el-option label="35路" value="35"/>
+              <el-option label="36路" value="36"/>
+              <el-option label="37路" value="37"/>
+              <el-option label="38路" value="38"/>
+
             </el-select>
           </el-col>
         </el-row>
@@ -303,11 +361,11 @@
         <el-row :gutter="24">
           <el-col :span="3">评级分数</el-col>
           <el-col :span="6">
-            <el-input v-model="temp.grade" :disabled="true" />
+            <el-input v-model="temp.grade" />
           </el-col>
           <el-col :span="4">受到投诉次数</el-col>
           <el-col :span="6">
-            <el-input v-model="temp.complaintCount" :disabled="true" />
+            <el-input v-model="temp.complaintCount" />
           </el-col>
         </el-row>
         <el-row :gutter="24">
@@ -332,12 +390,13 @@
 </template>
 
 <script>
-  import {getList, postList, createArticle, updateArticle,deleteArticle,searchArticle} from '@/api/table'
+  import {postList, createArticle, updateArticle,deleteArticle,deleteAll} from '@/api/driver'
 
   export default {
     name: "index",
     data() {
       return {
+        moreSelect:false,
         inputSearch: undefined,
         selectSearch: undefined,
 
@@ -508,13 +567,76 @@
         this.currentPage = val;
         this.fetchData();
       },
+
+
+      toggleSelection(rows) {
+
+        if(rows){
+
+          if (rows.length > 0) {
+
+            this.$confirm('此操作将删除'+ rows.length +'条信息, 是否继续?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning',
+              center: true
+            }).then(() => {
+
+
+              deleteAll(rows).then((res) => {
+
+                this.multipleSelection = [];
+                this.moreSelect = false;
+                this.fetchData()
+
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+              }).catch((res) => {
+
+                this.$message({
+                  type: 'warning',
+                  message: res.message
+                });
+              })
+
+
+            }).catch(() => {
+
+              this.$message({
+                type: 'info',
+                message: '取消删除'
+              });
+            });
+
+
+
+
+
+          }else {
+            this.multipleSelection = [];
+          }
+
+        }else {
+          this.$refs.multipleTable.clearSelection();
+          this.moreSelect = false;
+        }
+
+
+      },
       handleSelectionChange(val) {
-        alert(123)
+        this.moreSelect = true;
+        this.multipleSelection = [];
+        for(var v in val){
+          this.multipleSelection.push(val[v].id)
+        }
+
         //this.multipleSelection = val;
-        //this.currentPage = val;
-        this.fetchData();
+        //this.fetchData();
         // console.log(`当前页: ${val}`);
       },
+
       callbackFunction(result) {
         alert(result + "aaa");
       },
@@ -653,7 +775,7 @@
         })*/
       },
       handleUpdate(row) {
-        alert(JSON.stringify(row))
+        //alert(JSON.stringify(row))
         this.temp = Object.assign({}, row) // copy obj
         //this.temp.timestamp = new Date(this.temp.timestamp)
         this.imageFaceUrl = row.photoPath;
@@ -884,6 +1006,11 @@
     height: 800px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
+  }
+  .deleteAllButton {
+    margin: 0px;
+    padding: 0px;
+    width: 120px;
   }
   /*.zjhn-nav li.active a{
     background-image:url(../image/Click_03_temp.png);

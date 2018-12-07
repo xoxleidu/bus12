@@ -306,8 +306,9 @@
         var map = that.map = new BMap.Map('JK-map');
         map.setCurrentCity("廊坊市");
         map.centerAndZoom(new BMap.Point(116.726509,39.53446), 13);
+
         // map.setMapStyle({
-        //   styleJson:[{}]
+        //   styleJson:mapStyle
         // });
         that.map.enableScrollWheelZoom(true);
         var traffic = new BMap.TrafficLayer();        // 创建交通流量图层实例
@@ -741,12 +742,11 @@
     clear: both;
   }
   .el-main {
-    background-color: #E9EEF3;
+    background-color: #f5f3f0;
     color: #333;
     text-align: center;
     margin: 0px;
     padding: 0px;
-    border: 1px solid #f5f3f0;
   }
   .grid-content {
     border-radius: 4px;

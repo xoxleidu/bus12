@@ -8,34 +8,39 @@
     <!--</ul>-->
     <!--<warning :currentLine="currentLine" v-if="showLineView" @close="hanlderClose"></warning>-->
     <div class="line-list">
-      <el-button type="primary" icon="arrow-left"  @click="close">返回</el-button>
-      <div class="line-item" v-for="lineItem,lineItemIndex in lineList">
-        <h2>{{lineItem.LineName}} 线路 {{lineItemIndex+1}}</h2>
-        <dl v-for="lineIndexs,index in busLists">
-          <dt>{{index.upSiteList?"上行":"下行"}}</dt>
-          <dd >
-            <!--<div class="station" v-for="stationIndex in currentLine.children.downSiteList"-->
-                 <!--:class="(lineItem.stations[stationIndex].bus.length >=2?'shuangche-warning ':'')-->
-					<!--+ (lineItem.stations[stationIndex].nextBus.length >=2?'shuangche-warning-next ':'')-->
-					<!--+ (lineItem.stations[stationIndex].bus.length?'has-bus ':'')-->
-					<!--">-->
-              <div class="station" v-for="stationIndex in busLists.downSiteList">
-              <h3 class="station-name">{{stationIndex.siteName}}</h3>
-              <div>
-                <span class="bus" v-for="bus in busLists.downSiteList.busList" :title="bus.vehicleNumber"  :key="bus.vehicleNumber" ></span>
+      <div class="line-item">
+    <dl v-for="lineIndexs,index in busLists">
+      <dt>{{index.upSiteList?"上行":"下行"}}</dt>
+      <dd >
+        <!--<div class="station" v-for="stationIndex in currentLine.children.downSiteList"-->
+        <!--:class="(lineItem.stations[stationIndex].bus.length >=2?'shuangche-warning ':'')-->
+        <!--+ (lineItem.stations[stationIndex].nextBus.length >=2?'shuangche-warning-next ':'')-->
+        <!--+ (lineItem.stations[stationIndex].bus.length?'has-bus ':'')-->
+        <!--">-->
+        <div class="station" v-for="stationIndex in busLists.downSiteList">
+          <h3 class="station-name">{{stationIndex.siteName}}</h3>
+          <div>
+            <span class="bus" v-for="bus in busLists.downSiteList.busList" :title="bus.vehicleNumber"  :key="bus.vehicleNumber" ></span>
 
-              </div>
-              <div class="bus-out" >
+          </div>
+          <div class="bus-out" >
 							<span class="bus" :title="bus.vehicleNumber" v-for="bus in busLists.downSiteList.busList">
 
 							</span>
-              </div>
-            </div>
-          </dd>
-        </dl>
-
+          </div>
+        </div>
+      </dd>
+    </dl>
       </div>
     </div>
+    <!--<div class="line-list">-->
+      <!--<el-button type="primary" icon="arrow-left"  @click="close">返回</el-button>-->
+      <!--<div class="line-item" v-for="lineItem,lineItemIndex in lineList">-->
+        <!--<h2>{{lineItem.LineName}} 线路 {{lineItemIndex+1}}</h2>-->
+
+
+      <!--</div>-->
+    <!--</div>-->
   </div>
 </template>
 <script>

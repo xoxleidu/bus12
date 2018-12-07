@@ -1,27 +1,22 @@
 import request from '@/utils/request'
 
 export function postList(currentPage,pageSize,queryk,queryv) {
-/*  if(currentPage == null) {
-    currentPage = 1
-  }*/
   var data = '';
   if(queryk == 0){
 
     data = {
       currentPage:currentPage,
       pageSize:pageSize,
-      busLicense:queryv
+      employeeId:queryv
     }
 
-  }
-  // else if (queryk == 1) {
-  //   data = {
-  //     currentPage:currentPage,
-  //     pageSize:pageSize,
-  //     idcard:queryv
-  //   }
-  // }
-  else {
+  } else if (queryk == 1) {
+    data = {
+      currentPage:currentPage,
+      pageSize:pageSize,
+      idcard:queryv
+    }
+  } else {
     data = {
       currentPage:currentPage,
       pageSize:pageSize
@@ -29,7 +24,7 @@ export function postList(currentPage,pageSize,queryk,queryv) {
   }
 
   return request({
-    url: '/buscontroller/findallbus',
+    url: '/drivermange/findDriverInfoByPage',
     method: 'post',
     data
   })
@@ -37,7 +32,7 @@ export function postList(currentPage,pageSize,queryk,queryv) {
 
 export function createArticle(data) {
   return request({
-    url: '/buscontroller/addbus',
+    url: '/drivermange/saveDriverInfo',
     method: 'post',
     data//
   })
@@ -45,7 +40,7 @@ export function createArticle(data) {
 
 export function updateArticle(data) {
   return request({
-    url: '/buscontroller/updatebus',
+    url: '/drivermange/updateDriverInfo',
     method: 'post',
     data
   })
@@ -53,7 +48,7 @@ export function updateArticle(data) {
 
 export function deleteArticle(data) {
   return request({
-    url: '/buscontroller/deletebusbyid',
+    url: '/drivermange/forbideDriverInfos',
     method: 'post',
     data:{
       id:data
@@ -63,7 +58,7 @@ export function deleteArticle(data) {
 
 export function deleteAll(data) {
   return request({
-    url: '/buscontroller/deletebusidlist',
+    url: '/drivermange/deletebusidlist',
     method: 'post',
     data
   })

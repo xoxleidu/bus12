@@ -1,6 +1,12 @@
 <template>
   <div>
     <el-row class="el-row-left">
+      <el-col :span="2" v-if="moreSelect" class="deleteAllButton">
+        <el-button type="danger" @click="toggleSelection(multipleSelection)">删除选中项</el-button>
+      </el-col>
+      <el-col :span="2" v-if="moreSelect" class="deleteAllButton">
+        <el-button @click="toggleSelection()">取消选择</el-button>
+      </el-col>
       <el-col :span="6">
         <el-input placeholder="请输入内容" v-model="inputSearch" @keyup.enter.native="onSubmitSearch"
                   class="input-with-select">
@@ -14,8 +20,9 @@
         <el-button type="success" icon="el-icon-search" @click="onSubmitSearch"></el-button>
       </el-col>
       <el-col :span="2">
-        <el-button type="primary" @click="onSubmitAdd">Add</el-button>
+        <el-button type="primary" @click="onSubmitAdd">添加车辆信息</el-button>
       </el-col>
+
       <el-col :span="2">
         <el-button type="primary" @click="onSubmitClear">刷新</el-button>
       </el-col>
@@ -33,11 +40,15 @@
       style="width: 98%;margin: 20px;">
 
       <el-table-column
-        prop="id"
-        label="ID"
-        sortable
-        width="60">
+        type="selection"
+        width="55">
       </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="id"-->
+        <!--label="ID"-->
+        <!--sortable-->
+        <!--width="60">-->
+      <!--</el-table-column>-->
       <!--<el-table-column-->
       <!--prop="date"-->
       <!--label="日期"-->
@@ -211,7 +222,7 @@
         <el-row :gutter="16">
           <el-col :span="2">车牌号</el-col>
           <el-col :span="5">
-            <el-input v-model="temp.busLicense" :disabled="true"/>
+            <el-input v-model="temp.busLicense" :disabled="dialogStatus==='create'? false : true"/>
           </el-col>
           <el-col :span="2">座位</el-col>
           <el-col :span="4">
@@ -226,18 +237,18 @@
         <el-row :gutter="16">
           <el-col :span="3">车辆识别码</el-col>
           <el-col :span="6">
-            <el-input v-model="temp.vehicleIdentification" :disabled="true"/>
+            <el-input v-model="temp.vehicleIdentification" :disabled="dialogStatus==='create'? false : true"/>
           </el-col>
           <el-col :span="3">发动机号</el-col>
           <el-col :span="6">
-            <el-input v-model="temp.engineNumber" :disabled="true"/>
+            <el-input v-model="temp.engineNumber" :disabled="dialogStatus==='create'? false : true"/>
           </el-col>
         </el-row>
 
         <el-row :gutter="16">
           <el-col :span="2">厂牌号</el-col>
           <el-col :span="6">
-            <el-input v-model="temp.brandCachet" :disabled="true" />
+            <el-input v-model="temp.brandCachet" :disabled="dialogStatus==='create'? false : true" />
           </el-col>
           <!--<el-col :span="6">-->
           <!--<el-radio-group v-model="temp.airConditioned">-->
@@ -273,7 +284,7 @@
           <!--</el-col>-->
           <el-col :span="3">所属公司</el-col>
           <el-col :span="4">
-            <el-select v-model="temp.remarks" placeholder="please select your zone">
+            <el-select v-model="temp.remarks" placeholder="请选择公司">
               <el-option label="一公司" value="一公司"/>
               <el-option label="一公司备用" value="一公司备用"/>
               <el-option label="二公司" value="二公司"/>
@@ -327,7 +338,7 @@
 
           <el-col :span="3">验车时间</el-col>
           <el-col :span="6">
-            <el-input v-model="temp.vehicleExamination" :disabled="true" />
+            <el-input v-model="temp.vehicleExamination" :disabled="dialogStatus==='create'? false : true" />
           </el-col>
         </el-row>
 
@@ -364,12 +375,13 @@
 </template>
 
 <script>
-  import {getList, postList, createArticle, updateArticle,deleteArticle,searchArticle} from '@/api/bus'
+  import {postList, createArticle, updateArticle,deleteArticle,deleteAll} from '@/api/bus'
 
   export default {
     name: "index",
     data() {
       return {
+        moreSelect:false,
         inputSearch: undefined,
         selectSearch: undefined,
 
@@ -530,10 +542,76 @@
         this.currentPage = val;
         this.fetchData();
       },
+
+      toggleSelection(rows) {
+
+        if(rows){
+
+          if (rows.length > 0) {
+
+            this.$confirm('此操作将删除'+ rows.length +'条信息, 是否继续?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning',
+              center: true
+            }).then(() => {
+
+
+              deleteAll(rows).then((res) => {
+
+                this.multipleSelection = [];
+                this.moreSelect = false;
+                this.fetchData()
+
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+              }).catch((res) => {
+
+                this.$message({
+                  type: 'warning',
+                  message: res.message
+                });
+              })
+
+
+            }).catch(() => {
+
+              this.$message({
+                type: 'info',
+                message: '取消删除'
+              });
+            });
+
+
+
+
+
+          }else {
+            this.multipleSelection = [];
+          }
+
+        }else {
+          this.$refs.multipleTable.clearSelection();
+          this.moreSelect = false;
+        }
+
+
+      },
       handleSelectionChange(val) {
-        this.fetchData();
+        this.moreSelect = true;
+        this.multipleSelection = [];
+        for(var v in val){
+          this.multipleSelection.push(val[v].id)
+        }
+
+        //this.multipleSelection = val;
+        //this.fetchData();
         // console.log(`当前页: ${val}`);
       },
+
+
       callbackFunction(result) {
         alert(result + "aaa");
       },
@@ -730,6 +808,11 @@
     background-color: #fff;
   }
   .input-with-select select {
+    width: 120px;
+  }
+  .deleteAllButton {
+    margin: 0px;
+    padding: 0px;
     width: 120px;
   }
 

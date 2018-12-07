@@ -236,6 +236,14 @@
           {
             'name': '36路',
             played:false
+          },
+          {
+            'name': '37路',
+            played:false
+          },
+          {
+            'name': '38路',
+            played:false
           }
         ],
         stationMakerList:[
@@ -834,9 +842,9 @@
 
   .XL-group{position:absolute; right:0; top:60px; z-index: 22; background:rgba(0,0,0,0.5); color: #FFF;}
 
-  .XL-infow {position:absolute; width: 88%; right:0; bottom:20px; z-index: 22; background:rgba(0,0,0,0.7); color: #FFF; padding: 20px;display: none;}
-  .winfo-l {float: left; width: 20%; display: none;}
-  .winfo-r {float: right; padding-right: 20px; width: 80%;color: #dedede;
+  .XL-infow {position:absolute; width: 70%; right:0; bottom:5px; z-index: 22; background:rgba(0,0,0,0.7); color: #FFF; padding: 10px;display: none;}
+  .winfo-l {float:left;display: none;}
+  .winfo-r {float: right; padding-right: 10px; width: 75%;color: #dedede;
     div{padding: 5px;}
     .winfo-title{font-weight: bold;color: #FFF;
       span{ color: #00fff0;}

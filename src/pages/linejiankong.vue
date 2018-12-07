@@ -294,11 +294,11 @@
 </script>
 <style lang="less">
   .buslistrow{
-    background-color: #f2f6fc;
+    background-color: #FFF;
   }
   .buslistrowbt{
     color: #1f2d3d;
-    background-color: #dbe3ea;
+    background-color: #dedede;
     height: 50px;
     line-height: 50px;
     margin-bottom: 20px;
@@ -311,10 +311,11 @@
     clear: both;
   }
   .el-main {
-    background-color: #E9EEF3;
+    background-color: #f5f3f0;
     color: #333;
     text-align: center;
-
+    padding:0px;
+    margin: 0px;
   }
   .grid-content {
     border-radius: 4px;
@@ -403,13 +404,14 @@
     position: relative;
     margin: -5px 8px 0px 8px;
     border-top: 1px solid #bbb;
-    height: 280px;
+    height: 200px;
     width: 60px;
 
   }
   .weui-cell-circle{
     border: 1px solid #000;
-    border-radius: 5px;
+    background-color: rgb(0, 162, 255);
+    border-radius: 6px;
     width: 10px;
     height: 10px;
     border-color: rgb(0, 162, 255);

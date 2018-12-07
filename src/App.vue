@@ -1,7 +1,10 @@
 <template>
   <div id="app" > <!--导航条-->
     <el-menu class="el-menu-demo" mode="horizontal" background-color="#1f2d3d" text-color="#fff"
-             active-text-color="#85ce61" router>
+             active-text-color="#00a2ff" router>
+      <el-menu-item index="/busjiankong">
+        <img src="../static/logo.png"/>
+      </el-menu-item>
 
         <el-menu-item index="/busjiankong" class="el-menu-item-demo">
           <i class="fa fa-video-camera" aria-hidden="true"></i>
@@ -16,7 +19,7 @@
 
         <span>线路监控</span>
       </el-menu-item>
-      <el-menu-item index="/guiji">
+      <el-menu-item index="/guiji" class="el-menu-item-demo">
         <i class="fa fa-play-circle" aria-hidden="true"></i>
         <span>轨迹回放</span>
       </el-menu-item>
@@ -43,7 +46,7 @@
       <!--<el-submenu index="8">-->
         <!--<template slot="title">我的工作台</template>-->
       <!--</el-submenu>-->
-      <el-menu-item class="el-menu-item-demo" index=""><a href="http://www.baidu.com" target="_blank">接口文档</a></el-menu-item>
+      <!--<el-menu-item class="el-menu-item-demo" index="/"><a href="http://www.baidu.com" target="_blank">接口文档</a></el-menu-item>-->
     </el-menu>
 
     <router-view class="mainX" v-bind:style="{height: myHeight}"></router-view>
@@ -77,9 +80,15 @@
     text-decoration: none;
   }
 
+  .el-menu-item-demo i{
+    color: #FFFFFF
+  }
+  .is-active i {
+    color: #00a2ff
+  }
   .el-menu-item-demo:hover {
-    background-color: #85ce61 !important;
-    color: #1f2d3d !important;
+    background-color: #00a2ff !important;
+    color: #FFF !important;
   }
   .fa {
     color: #f2f6fc;
