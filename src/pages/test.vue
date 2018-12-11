@@ -1,91 +1,132 @@
 <template>
-  <div class="jiankong-line">
-    3213
-    <!--<ul class="jiankong-line-list">-->
-      <!--<li v-for="line in lineList" @click="showLine(line)" class="jiankong-line-item">-->
-        <!--{{line.lineName}}-->
-      <!--</li>-->
-    <!--</ul>-->
-    <!--<warning :currentLine="currentLine" v-if="showLineView" @close="hanlderClose"></warning>-->
-    <div class="line-list">
-      <div class="line-item">
-    <dl v-for="lineIndexs,index in busLists">
-      <dt>{{index.upSiteList?"上行":"下行"}}</dt>
-      <dd >
-        <!--<div class="station" v-for="stationIndex in currentLine.children.downSiteList"-->
-        <!--:class="(lineItem.stations[stationIndex].bus.length >=2?'shuangche-warning ':'')-->
-        <!--+ (lineItem.stations[stationIndex].nextBus.length >=2?'shuangche-warning-next ':'')-->
-        <!--+ (lineItem.stations[stationIndex].bus.length?'has-bus ':'')-->
-        <!--">-->
-        <div class="station" v-for="stationIndex in busLists.downSiteList">
-          <h3 class="station-name">{{stationIndex.siteName}}</h3>
-          <div>
-            <span class="bus" v-for="bus in busLists.downSiteList.busList" :title="bus.vehicleNumber"  :key="bus.vehicleNumber" ></span>
 
-          </div>
-          <div class="bus-out" >
-							<span class="bus" :title="bus.vehicleNumber" v-for="bus in busLists.downSiteList.busList">
+  <div style="height: 800px;">
+    <div style="float: left;width: 200px;">
 
-							</span>
-          </div>
-        </div>
-      </dd>
-    </dl>
-      </div>
-    </div>
-    <!--<div class="line-list">-->
-      <!--<el-button type="primary" icon="arrow-left"  @click="close">返回</el-button>-->
-      <!--<div class="line-item" v-for="lineItem,lineItemIndex in lineList">-->
-        <!--<h2>{{lineItem.LineName}} 线路 {{lineItemIndex+1}}</h2>-->
+      <!--<div class="tree-node">-->
+        <!--<h2 @click="(e)=>{treeToggle(e,line)}">-->
+          <!--<span class="el-tree-node__expand-icon"></span>-->
+          <!--<input type="checkbox" @click.stop="" @change="(e)=>{treeLineCheck(e,line)}">-->
+          <!--{{line.lineName}}-->
 
+          <!--&lt;!&ndash;<i class="el-icon-fa-level-down"></i> {{line.children.filter((car)=>{return car.UpDown==1}).length}}&ndash;&gt;-->
+          <!--&lt;!&ndash;/&ndash;&gt;-->
+          <!--&lt;!&ndash;<i class="el-icon-fa-level-up"></i> {{line.children.filter((car)=>{return car.UpDown!=1}).length}}&ndash;&gt;-->
+          <!--&lt;!&ndash;<span class="badge"></span>&ndash;&gt;-->
+        <!--</h2>-->
+        <!--<div class="children" v-if="line.id">-->
+          <!--<div class="tree-node" v-for="car,index in line.busList"   :id="'id'+car.lineId" :key="index">-->
 
+            <!--<h2 @dblclick="(e)=>{positionCar(e,car)}" >-->
+              <!--<span class="el-tree-node__expand-icon"></span>-->
+              <!--<input type="checkbox" @change="(e)=>{treeCheck(e,car)}" @click.stop="" />-->
+              <!--<i :class="(car.upDown==1?'el-icon-fa-level-down ':'el-icon-fa-level-up ') + 'updown'"></i>-->
+              <!--<i class="el-icon-fa-bus"></i>-->
+              <!--<span @click="(e)=> {treeToggle(e)}">冀R{{car.vehicleNumber}}  {{car.speed}}km/h</span>-->
+            <!--</h2>-->
+
+            <!--<div class="children video-list">-->
+              <!--<h3 v-for="i in 8">-->
+                <!--<input type="checkbox" @change.navtive="(e)=>{viedeoCheck(e,car,i)}" />-->
+                <!--<i class="el-icon-fa-video-camera"></i> 摄像头{{i}}-->
+              <!--</h3>-->
+            <!--</div>-->
+
+          <!--</div>-->
+        <!--</div>-->
       <!--</div>-->
-    <!--</div>-->
+
+
+
+
+    </div>
+    <div style="width:100%;height: 100%;float: right;">
+      <!--<div id="JK-map" style="width:100%;height: 100%"></div>-->
+    </div>
   </div>
+
 </template>
 <script>
-  //import warning from '../components/layout/warning.vue'
-  //import {lineDatas} from "../api/index.js"
-  //import {god} from "../api/jiankong-line.js"
+
+  import axios from "axios";
   import {getBusLineList,getBusGPS} from "@/api/table"
   export default {
-    //components:{warning:warning},
-    watch:{
-      "$route":function(){
-        try{
-          var lineId = this.$route.path.replace("/jiankong-line/","");
-          this.routeView(lineId);
-        }catch(err){
 
-        }
-      }
-    },
+
     data() {
       return {
-        showLineView:false,
-        currentLine:{
-          children:[],
-          LineName:"",
-          round:false
+        lineList:{},
+
+        lineProps: {
+          label: 'lineName',
+          children: {
+            label: 'lineName'
+          }
         },
-        warningData:{},
-        //lineData:Object.freeze(lineData),
-        lineList:[],
-        busLists:[]
-      }
+        count: 1      }
     },
     mounted() {
+
       var that = this;
+
+
+      // window.mapInit= function(){
+      //   var map = that.map = new BMap.Map('JK-map');
+      //   map.setCurrentCity("廊坊市");
+      //   map.centerAndZoom(new BMap.Point(116.726509,39.53446), 13);
+      //
+      //   // map.setMapStyle({
+      //   //   styleJson:mapStyle
+      //   // });
+      //   that.map.enableScrollWheelZoom(true);
+      //   var traffic = new BMap.TrafficLayer();        // 创建交通流量图层实例
+      //   map.addTileLayer(traffic);                    // 将图层添加到地图上
+      //
+      //
+      // }
+      // if(!window.BMap){
+      //   var script = document.createElement("script");
+      //   script.type = "text/javascript";
+      //   script.src = "http://api.map.baidu.com/api?v=2.0&ak=C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q&callback=mapInit";
+      //   document.body.appendChild(script);
+      // }else{
+      //   mapInit()
+      // }
+
+
 
       getBusLineList().then(response => {
         if(response.code === '000') {
           //返回线路赋值
 
-          that.lineList = response.result;
-          //that.$set(this.$data,"lineList",response.result);
-          console.log('lineList')
-          console.log(that.lineList)
-          console.log('lineList')
+          var line = response.result;
+          // this.$set(this.$data,"lineList",line);
+          var allPromise = [];
+          var lineList = [];
+
+          for(var i=0;i<line.length;i++){
+              allPromise.push(getBusGPS(line[i].runMethod))
+          }
+          axios.all(allPromise).then(res=>{
+            res.map((item,index)=>{
+              lineList.push(item.result);
+            });
+
+            lineList = [{
+              lineName:1,
+              upSiteList:[{
+                lineName:2
+              }]
+            }]
+
+            this.$set(this.$data,"lineList",lineList);
+            //console.log('this.lineList')
+            //console.log(this.lineList)
+          });
+
+
+
+
         }
 
         this.initReq();
@@ -103,66 +144,48 @@
     methods:{
 
       initReq(){
+        console.log('this.lineList')
+        console.log(this.lineList)
 
-        getBusGPS(12).then(response => {
+
+      },
+
+      handleNodeClick(data) {
+
+        getBusGPS(data.runMethod).then(response => {
           if (response.code === '000') {
             //返回车辆信息赋值
             //console.log(response)
 
 
             //this.showLineView = true;
-            this.busLists = response.result;
+            //this.busLists = response.result;
+            this.$set(this.$data,"busLists",response.result);
+            console.log('321321');
+            console.log(this.busLists);
             //this.$set(this.$data,"currentLine.children",response.result);
             // for (var i in line.busList){
             //
             //   this.$set(line.busList[i],"videoList",response.result);
             // }
-            console.log('currentLine.children')
-            console.log(this.busLists)
-            console.log('currentLine.children')
+
 
           }
           //this.openLine.add(line.runMethod);
 
 
         });
-
       },
-      // routeView:function(newVal){
-      //   if(newVal == "all"){
-      //     this.showLineView = false;
-      //   }else{
-      //     this.lineList.map((line)=>{
-      //       if(line.LineId == newVal){
-      //         this.showLine(line);
-      //       }
-      //     })
-      //   }
-      // },
-      // hanlderClose:function(){
-      //   this.showLineView = false;
-      //   window.location.hash = "/jiankong-line/all";
-      // },
-      // showLine:function(line){
-      //   //window.location.hash = "/jiankong-line/"+line.LineId;
-      //   var that = this;
-      //   try{
-      //     this.showLineView = true;
-      //     if(line.round){
-      //       //如果是环线
-      //       this.currentLine.children = [god.lines[line.lineList[0]],god.lines[line.lineList[1]]]
-      //       this.$set(this.currnetLine,"children");
-      //     }else{
-      //       //如果不是环线
-      //       this.currentLine.children = [god.lines[line.LineId]]
-      //       this.$set(this.currnetLine,"children");
-      //     }
-      //   }catch(err){
-      //
-      //   }
-      //
-      //
-      // }
+
+
+      handleCheckChange(data, checked, indeterminate) {
+
+        console.log(data, checked, indeterminate);
+
+
+
+      }
+
 
     }
   }

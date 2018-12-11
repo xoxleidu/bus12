@@ -193,11 +193,21 @@
       //alert(this.$route.query.sendLineName)
 
       //this.sendLineName = this.$route.query.sendLineName
+
       if(this.$route.query.sendLineName){
 
         this.$set(this.$data.sendLineName,"runMethod",this.$route.query.sendLineName);
 
         if(this.sendLineName.runMethod){
+          getBusLineList().then(response => {
+            if(response.code === '000') {
+
+              this.treelist = response.result
+            }
+
+            //this.listLoading = false
+
+          })
           this.oneInitReq(this.sendLineName)
         }
 
@@ -213,7 +223,7 @@
 
       getBusLineList().then(response => {
         if(response.code === '000') {
-          //alert(121)
+
           this.treelist = response.result
         }
 
@@ -252,6 +262,7 @@
       },
 
       oneInitReq(line){
+
         clearInterval(this.timer);
         getBusGPS(line.runMethod).then(response => {
           console.log(response.result)
@@ -265,7 +276,7 @@
 
 
       treeToggle(e,line){
-        console.log(e)
+        console.log(line)
 
         this.$set(this.$data.sendLineName,"runMethod",null);
         this.oneInitReq(line)

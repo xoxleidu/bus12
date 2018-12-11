@@ -69,3 +69,13 @@ export function updataBusGuijiEditline(data) {
     data
   })
 }
+
+export function getBusGuijiEditlineGps(data) {
+  return request({
+    url: '/line/findNewLienAndStation',
+    method: 'post',
+    data:{
+      runMethod:data
+    }
+  })
+}

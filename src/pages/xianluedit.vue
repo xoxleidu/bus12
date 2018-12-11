@@ -58,13 +58,21 @@
             <el-option
               v-for="item in treebuslist"
               :key="item.vehicleNumber"
-              :label="item.vehicleNumber"
+              :label="'冀R'+item.vehicleNumber"
               :value="item.vehicleNumber">
             </el-option>
           </el-select>
         </el-form-item>
 
         <el-form-item v-if="isTreebuslistButton">
+          <el-tag
+            v-for="tag in tags"
+            :key="tag.name"
+            closable
+            @close="handleClose(tag)"
+            :style="tag.style">
+            {{tag.name}}
+          </el-tag>
           <el-button class="updataLineButton"  size="medium" type="danger" @click="searchHandlerUpdate">确定当前车辆线路为实际线路</el-button>
         </el-form-item>
       </el-form>
@@ -144,6 +152,7 @@
   export default {
     data() {
       return {
+        tags: [],
         player:{
           speed:"1",
           timer:2000,//默认延迟
@@ -217,6 +226,8 @@
 
 
 
+
+
       getBusLineList().then(response => {
         if(response.code === '000') {
           //返回线路赋值
@@ -252,7 +263,10 @@
     },
     methods: {
 
-
+      handleClose(tag) {
+        console.log(tag)
+        this.tags.splice(this.tags.indexOf(tag), 1);
+      },
 
 
 
@@ -376,9 +390,9 @@
 
         this.searchData.vehicleNumber = selVal
         this.isTreebuslistButton = false;
-        that.map.removeOverlay(this.polyline);
+        //that.map.removeOverlay(this.polyline);
         that.clearMapInfo();
-        console.log(this.searchData);
+        //console.log(this.searchData);
 
 
         getBusGuijiEditline(this.searchData).then(response => {
@@ -428,7 +442,13 @@
                 })
               })
               //console.log(linePoints)
-              that.polyline = new BMap.Polyline(linePoints, {strokeColor:"blue", strokeWeight:5, strokeOpacity:0.5});
+
+              var sColor = that.randomColor()
+              that.tags = [
+                { name: '冀R'+selVal, style:'background:'+ sColor},
+              ]
+
+              that.polyline = new BMap.Polyline(linePoints, {strokeColor:sColor, strokeWeight:4});
               that.map.addOverlay(that.polyline);   //增加折线
             })
 
@@ -442,6 +462,14 @@
 
 
 
+      },
+
+      randomColor(){
+        var r = Math.floor(Math.random()*255);
+        var g = Math.floor(Math.random()*255);
+        var b = Math.floor(Math.random()*255);
+        var color = 'rgba('+ r +','+ g +','+ b +',0.5)';
+        return color
       },
 
 

@@ -38,12 +38,7 @@
           <!--</div>-->
         </div>
 
-        <div class="children video-list" style="line-height: 30px;color:#FFF;">
-          <h3 v-for="i in 8">
-            <input type="checkbox" @change.navtive="(e)=>{viedeoCheck(e,testData,i)}" />
-            <i class="el-icon-fa-video-camera"></i> 摄像头{{i}}
-          </h3>
-        </div>
+
 
         <el-row v-for="line in lineList"  :key="line.id" class="line-list">
 
@@ -60,8 +55,9 @@
               <!--<i class="el-icon-fa-level-up"></i> {{line.children.filter((car)=>{return car.UpDown!=1}).length}}-->
               <!--<span class="badge"></span>-->
             </h2>
-            <div class="children" v-if="line.id">
-              <div class="tree-node" v-for="car,index in line.busList"   :id="'id'+car.lineId" :key="index">
+            <!--<div class="children" v-if="line.show">-->
+            <div class="children" v-if="line.runMethod">
+              <div class="tree-node" v-for="car,index in line.busList" :id="'id'+car.runMethod" :key="index">
 
                 <h2 @dblclick="(e)=>{positionCar(e,car)}" >
                   <span class="el-tree-node__expand-icon"></span>
@@ -104,21 +100,21 @@
             离线车辆：<span style="color:#999;">{{offLineCarCount}}</span><br> -->
 
             运营总量：739<br>
-            运行车辆：<span style="color:#85ce61;">{{onlineCount}}</span><br>
-            离线车辆：<span style="color:gold;">{{739-onlineCount}}</span><br>
-            超速车辆：<span style="color:red;font-weight: bold;"><!--{{overSpeedList.length}}-->23</span> <a href="javascript:;" @click="showOverSpeedList = !showOverSpeedList">[显示详细]</a>
+            运行车辆：<span style="color:#85ce61;">{{YujingData.zaixian}}</span><br>
+            离线车辆：<span style="color:gold;">{{739-YujingData.zaixian}}</span><br>
+            超速车辆：<span style="color:red;font-weight: bold;" >{{YujingData.CS? YujingData.CS.length : 0}}</span> <a href="javascript:;" @click="showOverSpeedList = !showOverSpeedList">[显示详细]</a>
 
-            <!--<ul v-if="showOverSpeedList">-->
-              <!--<li v-for="car in overSpeedList">-->
-                <!--<div class="overspeed-title">-->
-                  <!--<span>{{car.CarCard}}</span> {{car.GPSSpeed}} km/h-->
+            <ul v-if="showOverSpeedList">
+              <li v-for="car in YujingData.CS">
+                <div class="overspeed-title">
+                  <span>冀R{{car.vehicleNumber}}</span> {{car.speed}} km/h
 
                   <!--<div class="overspeed-right">-->
                     <!--<a href="javascript:;" @click="car.showOverSpeed = !car.showOverSpeed" >详细</a>-->
                     <!--<a href="javascript:;" @click="()=>{showOverSpeedCar(car)}" >定位</a>-->
                   <!--</div>-->
 
-                <!--</div>-->
+                </div>
 
                 <!--<div v-if="car.showOverSpeed" class="overspeed-info">-->
                   <!--<div class="item">-->
@@ -138,8 +134,10 @@
                     <!--<strong>下一站:</strong>{{getNextStation(car)}}-->
                   <!--</div>-->
                 <!--</div>-->
-              <!--</li>-->
-            <!--</ul>-->
+
+
+              </li>
+            </ul>
 
           </div>
 
@@ -165,7 +163,7 @@
                     <param name="_StockProps" value="0">
                   </object>
                 </div>
-                <el-button class="close" @click="removeVideo(video)" type="primary" icon="fa-times" size="small"></el-button>
+                <el-button class="close" @click="removeVideo(video)" type="primary" icon="fa fa-times" size="small"></el-button>
                 <div class="info">
                   {{video.videoName}}
                 </div>
@@ -188,24 +186,27 @@
       <div class="warning-tips">
 
         <el-row :gutter="10">
+
+
           <el-col :span="8">
             <dl class="elcolw">
               <dt>大间距</dt>
               <dd>
-                <span v-for="djj in YujingData.dajianju">
+                <span v-for="djj in YujingData.DJJ"><!--downDaJianJu-->
                  <!--<router-link :to="'/jiankong-line/'+djj.lineId.replace('路',1)">{{djj.vehicleNumber}}</router-link>-->
-                  <router-link :to="'/mapline/mapline?sendLineName='+djj.runMethod">{{djj.vehicleNumber}}</router-link>
+                  <router-link :to="'/linejiankong?sendLineName='+djj.runMethod">{{djj.lineName}}</router-link>
                 </span>
 
               </dd>
             </dl>
           </el-col>
+
           <el-col :span="8">
             <dl class="elcolw">
               <dt>双车</dt>
               <dd>
-                <span v-for="sc in YujingData.shuangche">
-                  <router-link :to="'/mapline/mapline?sendLineName='+sc.runMethod">{{sc.vehicleNumber}}</router-link>
+                <span v-for="sc in YujingData.SC">
+                  <router-link :to="'/linejiankong?sendLineName='+sc.runMethod">{{sc.lineName}}</router-link>
                 </span>
               </dd>
 
@@ -216,9 +217,9 @@
             <dl class="elcolw">
               <dt>滞站</dt>
               <dd style="height:45px;overflow-y:auto;">
-                <span v-for="item in YujingData.zhizhan">
-                  <router-link :to="'/mapline?sendLineName='+item.runMethod">
-                    {{item.vehicleNumber}}
+                <span v-for="item in YujingData.ZZ">
+                  <router-link :to="'/linejiankong?sendLineName='+item.runMethod">
+                    {{item.lineName}}
                     <!--{{item.lineId}}-->
                     <!--{{item.stationId}}-->
                     <!--{{item.vehicleNumber}}-->
@@ -243,7 +244,7 @@
 <script>
 
 
-  import { getBusLineList,getBusList,getBusYujing } from '@/api/table'
+  import { getBusLineList,getBusList,getBusYujing,getBusGuijiEditlineGps } from '@/api/table'
 
   import $ from 'jQuery'
 
@@ -253,9 +254,7 @@
       return {
         showOverSpeedList:false,
 
-        testData:{
-          CarSign:'1105'
-        },
+
         videoList:[],
 
         myHeight: (window.innerHeight - 220) + 'px',
@@ -275,6 +274,8 @@
           {        "lineName": "加载中"        }
         ],
         YujingData:[],
+        chaosu:[],
+        zaixian:null,
         carMarkerWindow:{},
         timer:null
       }
@@ -372,46 +373,65 @@
             })
           });
 
+          getBusYujing().then(Response => {
+            if(Response.code === '000') {
+              this.YujingData = Response.result
+              console.log('this.YujingData')
+              console.log(Response.result.upDaJianJu.name)
+            }
+          })
+
           //预警信息 注意开启
 
           // getBusYujing().then(Response => {
           //   if(Response.code === '000') {
           //
-          //     // var dajianju = {};
-          //     // var shuangche = {};
-          //     // var zhizhan = {};
-          //     // Response.result.dajianju.map(item=>{
-          //     //   dajianju[item.runMethod] = "";
-          //     // });
-          //     // Response.result.shuangche.map(item=>{
-          //     //   //shuangche[item.lineId] = "";
-          //     //   shuangche[item.runMethod] = "";
-          //     // });
-          //     // Response.result.zhizhan.map(item=>{
-          //     //   zhizhan[item.runMethod] = "";
-          //     // });
-          //     // var dajianjuArr = [];
-          //     // var shuangcheArr = [];
-          //     // var zhizhanArr = [];
-          //     // for(var key1 in dajianju){
-          //     //   //dajianjuArr.push({'dajianju':key1});
-          //     //   dajianjuArr.push(key1);
-          //     // }
-          //     // for(var key2 in shuangche){
-          //     //   shuangcheArr.push(key2);
-          //     // }
-          //     // for(var key3 in zhizhan){
-          //     //   zhizhanArr.push(key3);
-          //     // }
-          //     // //console.log(dajianjuArr);
-          //     //
-          //     // this.$set(this.$data.YujingData,"dajianju",dajianjuArr);
-          //     // this.$set(this.$data.YujingData,"shuangche",shuangcheArr);
-          //     // this.$set(this.$data.YujingData,"zhizhan",zhizhanArr);
+          //     this.chaosu = Response.result.chaosu;
+          //     this.zaixian = Response.result.zaixian;
           //
-          //     this.$set(this.$data.YujingData,"dajianju",Response.result.dajianju);
-          //     this.$set(this.$data.YujingData,"shuangche",Response.result.shuangche);
-          //     this.$set(this.$data.YujingData,"zhizhan",Response.result.zhizhan);
+          //
+          //     var dajianju = {};
+          //     var shuangche = {};
+          //     var zhizhan = {};
+          //
+          //     Response.result.dajianju.map(item=>{
+          //       //dajianju[item.lineName] = "";
+          //       dajianju[item.runMethod] = "";
+          //     });
+          //
+          //     Response.result.shuangche.map(item=>{
+          //       //shuangche[item.lineId] = "";
+          //       shuangche[item.runMethod] = "";
+          //     });
+          //     Response.result.zhizhan.map(item=>{
+          //       zhizhan[item.runMethod] = "";
+          //     });
+          //     var dajianjuArr = [];
+          //     var shuangcheArr = [];
+          //     var zhizhanArr = [];
+          //     for(var key1 in dajianju){
+          //       //dajianjuArr.push({'dajianju':key1});
+          //       console.log(key1)
+          //       dajianjuArr.push(key1);
+          //     }
+          //     for(var key2 in shuangche){
+          //       shuangcheArr.push(key2);
+          //     }
+          //     for(var key3 in zhizhan){
+          //       zhizhanArr.push(key3);
+          //     }
+          //     //console.log(dajianjuArr);
+          //
+          //
+          //     this.$set(this.$data.YujingData,"dajianju",dajianjuArr);
+          //     this.$set(this.$data.YujingData,"shuangche",shuangcheArr);
+          //     this.$set(this.$data.YujingData,"zhizhan",zhizhanArr);
+          //
+          //     debugger
+          //
+          //     //this.$set(this.$data.YujingData,"dajianju",Response.result.dajianju);
+          //     //this.$set(this.$data.YujingData,"shuangche",Response.result.shuangche);
+          //     //this.$set(this.$data.YujingData,"zhizhan",Response.result.zhizhan);
           //   }
           // }) ;
 
@@ -469,6 +489,31 @@
 
       },
 
+      //定位超速车辆
+      showOverSpeedCar(car){
+        var that = this;
+        var line = this.lineList[this.lineList.buslist[car.runMethod]];
+        this.$set(line,"show",true);
+        this.$nextTick(function(){
+          var $dom = $("#id"+car.runMethod).find("h2>input[type=checkbox]");
+          if(!$dom.prop("checked")){
+            $dom.trigger("click");
+            var convertor = new BMap.Convertor();
+            var pt = new BMap.Point(car.longitude,car.latitude);
+            convertor.translate([pt], 1, 5, function(item){//转换坐标后定位
+              pt = item.points[0];
+              //定位
+              that.map.centerAndZoom(pt, 19);
+              // setTimeout(function(){
+              //   $(car.marker.V).trigger("click");
+              // },100)
+            });
+
+
+          }
+        })
+      },
+
       //监控视频
       removeVideo(data,$el){
         //删除指定得视频
@@ -480,6 +525,8 @@
         }
       },
       createVideo(data,$el){
+        console.log('video')
+        console.log(data)
         //添加视频数据到videoList
         data.$el = $el;
         var maxVideo = 12;
@@ -510,20 +557,21 @@
 
       },
       viedeoCheck(e,data,i){
-        console.log(e)
+        console.log('111')
         console.log(data)
-        console.log(i)
-        data[data.CarSign+i] = data[data.CarSign+i] || {
-          id:data.CarSign+i,
-          CarSign:data.CarSign,
+        data[data.vehicleId+i] = data[data.vehicleId+i] || {
+          id:data.vehicleId+i,
+          CarSign:data.vehicleId,
           i:i,
-          videoName:data.CarCard+"摄像头"+i
+          videoName:data.vehicleId+"摄像头"+i
         }
+        console.log('222')
+        console.log(data)
 
         if($(e.target).prop("checked")){
-          this.createVideo(data[data.CarSign+i],$(e.target));
+          this.createVideo(data[data.vehicleId+i],$(e.target));
         }else{
-          this.removeVideo(data[data.CarSign+i]);
+          this.removeVideo(data[data.vehicleId+i]);
         }
       },
 
@@ -555,20 +603,17 @@
               }
             });
 
-            that.createBusLine(line);
+            //that.createBusLine(line);
+            that.createBusLineGps(line);
           }else{
             $checkboxs.each(function(index,el){
               if($(el).prop("checked")){
                 $(el).trigger("click");
               }
             });
-            that.removeBusLine(line);
+            that.removeBusLineGps(line);
           }
         })
-      },
-
-      treeToggless(e){
-        alert(12)
       },
 
       //点击线路-加载线路下的车辆信息
@@ -632,6 +677,7 @@
       //移除车辆
       removeCar(line){
         this.map.removeOverlay(line.marker);
+        this.openLine.delete(line.runMethod);
         delete line.marker
       },
       //创建车辆
@@ -677,53 +723,118 @@
 
       },
 
-
-      createBusLine(line){        //创建线路
+      //后台获取线路
+      createBusLineGps(line){
 
         var that = this;
-        return new Promise(function(resolve,reject){
-          var busLineSearch  = new BMap.BusLineSearch("廊坊市",{
-            onGetBusLineComplete:function(busItem){
-              //console.log(busItem)
-              //debugger
-              if(!line.xianluLine){
-                that.createXianlu(busItem,line);//创建线路｛线、点｝
-              }
-            },
-            onGetBusListComplete:function(busList){
-              //console.log(busList)
-              var busItem = busList.getBusListItem(0);
-              busLineSearch.getBusLine(busItem);
-            }
-          });
-          var searchName = line.lineName;
-          if(searchName == "1路"){
-            searchName = "1路a线";
+        var polylines = [];
+        var polylinesPromise = [];
+        var convertor = new BMap.Convertor();
+        //测试数据
+        var reqdata = 181
+        getBusGuijiEditlineGps(reqdata).then(response => {
+          console.log(response)
+          var resLineData = response.result.newLine
+          resLineData.map((item)=>{
+            polylines.push(item.lon+","+item.lat)
+          })
+
+          for(var i=0,len=Math.ceil(polylines.length/100);i<len;i++){
+            var a = new Promise((resolve,reject)=>{
+              $.ajax({
+                url:"https://api.map.baidu.com/geoconv/v1/",
+                jsonp: "callback",
+                dataType:"jsonp",
+                data:{
+                  coords:polylines.slice(i*100,(i+1)*100).join(";"),
+                  from:1,
+                  to:5,
+                  ak:"C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q"
+                },
+                success:function(data){
+                  resolve(data)
+                }
+              });
+            });
+            polylinesPromise.push(a);
+
           }
-          busLineSearch.getBusList(searchName);
-        });
+
+          Promise.all(polylinesPromise).then(function(points){
+            var linePoints = [];
+            points.map((item)=>{
+              item.result.map((position)=>{
+                linePoints.push(new BMap.Point(position.x,position.y));
+              })
+            })
+            //console.log(linePoints)
+            that.polyline = new BMap.Polyline(linePoints, {strokeColor:"blue", strokeWeight:5, strokeOpacity:0.5});
+            that.map.addOverlay(that.polyline);   //增加折线
+            line.xianluLine = that.polyline;
+          })
+
+        })
+
       },
-      removeBusLine(line){        //删除线路
+
+      //删除线路
+      removeBusLineGps(line){
+        console.log('222')
+        console.log(line)
         var map = this.map;
         if(line.xianluLine){
           map.removeOverlay(line.xianluLine);
         }
         delete line.xianluLine
       },
-      createXianlu(busItem,line){        //创建线路｛线｝
-        var map = this.map;
-        var arrPois = busItem.getPath();
-        //alert('checked4')
-        //console.log('createXianlu')
-        //console.log(arrPois)
-        var color =  "rgb(25,131,211)";
-        //创建线
-        var mapLine = new BMap.Polyline(arrPois, {strokeColor: color,strokeWeight:7,strokeOpacity:0.6});
 
-        //输出 点、线
-        map.addOverlay(mapLine);
-        line.xianluLine = mapLine;
-      },
+
+      // createBusLine(line){        //创建线路
+      //
+      //   var that = this;
+      //   return new Promise(function(resolve,reject){
+      //     var busLineSearch  = new BMap.BusLineSearch("廊坊市",{
+      //       onGetBusLineComplete:function(busItem){
+      //         //console.log(busItem)
+      //         //debugger
+      //         if(!line.xianluLine){
+      //           that.createXianlu(busItem,line);//创建线路｛线、点｝
+      //         }
+      //       },
+      //       onGetBusListComplete:function(busList){
+      //         //console.log(busList)
+      //         var busItem = busList.getBusListItem(0);
+      //         busLineSearch.getBusLine(busItem);
+      //       }
+      //     });
+      //     var searchName = line.lineName;
+      //     if(searchName == "1路"){
+      //       searchName = "1路a线";
+      //     }
+      //     busLineSearch.getBusList(searchName);
+      //   });
+      // },
+      // removeBusLine(line){        //删除线路
+      //   var map = this.map;
+      //   if(line.xianluLine){
+      //     map.removeOverlay(line.xianluLine);
+      //   }
+      //   delete line.xianluLine
+      // },
+      // createXianlu(busItem,line){        //创建线路｛线｝
+      //   var map = this.map;
+      //   var arrPois = busItem.getPath();
+      //   //alert('checked4')
+      //   //console.log('createXianlu')
+      //   //console.log(arrPois)
+      //   var color =  "rgb(25,131,211)";
+      //   //创建线
+      //   var mapLine = new BMap.Polyline(arrPois, {strokeColor: color,strokeWeight:7,strokeOpacity:0.6});
+      //
+      //   //输出 点、线
+      //   map.addOverlay(mapLine);
+      //   line.xianluLine = mapLine;
+      // },
 
 
 

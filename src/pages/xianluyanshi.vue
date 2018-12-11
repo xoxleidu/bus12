@@ -858,7 +858,7 @@
   .el-checkbox-group {width: 400px; text-align: center;}
   .line-group{
     .el-checkbox-button{width: 98px;margin: 5px 0px;}
-    .el-checkbox-button__inner{border-radius: 0 !important;background:rgba(0,0,0,0.5);color: #FFF;}
+    .el-checkbox-button__inner{border-radius: 0 !important; border:0px !important;background:rgba(0,0,0,0.5);color: #FFF;}
   }
   .psbusbutton{
     background-color: #2d3a4b;
