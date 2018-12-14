@@ -65,14 +65,14 @@
         </el-form-item>
 
         <el-form-item v-if="isTreebuslistButton">
-          <el-tag
-            v-for="tag in tags"
-            :key="tag.name"
-            closable
-            @close="handleClose(tag)"
-            :style="tag.style">
-            {{tag.name}}
-          </el-tag>
+          <!--<el-tag-->
+            <!--v-for="tag in tags"-->
+            <!--:key="tag.name"-->
+            <!--closable-->
+            <!--@close="handleClose(tag)"-->
+            <!--:style="tag.style">-->
+            <!--{{tag.name}}-->
+          <!--</el-tag>-->
           <el-button class="updataLineButton"  size="medium" type="danger" @click="searchHandlerUpdate">确定当前车辆线路为实际线路</el-button>
         </el-form-item>
       </el-form>
@@ -233,10 +233,6 @@
           //返回线路赋值
           this.$set(this.$data,"treelist",response.result);
 
-
-
-
-
         }
         //this.initReq();
       })
@@ -254,7 +250,7 @@
       if(!window.BMap){
         var script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = "http://api.map.baidu.com/api?v=2.0&ak=C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q&callback=mapInit";
+        script.src = "https://api.map.baidu.com/api?v=2.0&ak=C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q&callback=mapInit";
         document.body.appendChild(script);
       }else{
         mapInit()
@@ -390,7 +386,7 @@
 
         this.searchData.vehicleNumber = selVal
         this.isTreebuslistButton = false;
-        //that.map.removeOverlay(this.polyline);
+        that.map.removeOverlay(this.polyline);
         that.clearMapInfo();
         //console.log(this.searchData);
 
@@ -444,11 +440,11 @@
               //console.log(linePoints)
 
               var sColor = that.randomColor()
-              that.tags = [
-                { name: '冀R'+selVal, style:'background:'+ sColor},
-              ]
+              // that.tags = [
+              //   { name: '冀R'+selVal, style:'background:'+ sColor},
+              // ]
 
-              that.polyline = new BMap.Polyline(linePoints, {strokeColor:sColor, strokeWeight:4});
+              that.polyline = new BMap.Polyline(linePoints, {strokeColor:"blue", strokeWeight:5, strokeOpacity:0.5});
               that.map.addOverlay(that.polyline);   //增加折线
             })
 

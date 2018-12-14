@@ -4,7 +4,8 @@ import { Message, MessageBox } from 'element-ui'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: 'http://192.168.88.27:7081/buscenter', // api 的 base_url
+  baseURL: 'https://gongjiao.cccts.com.cn:453/buscenter', // api 的 base_url
+  //baseURL: 'http://localhost:7081/buscenter', // api 的 base_url
   timeout: 50000 // 请求超时时间
 })
 

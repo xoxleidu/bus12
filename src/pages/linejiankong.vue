@@ -187,7 +187,12 @@
     },
     beforeDestroy(){
       clearInterval(this.timer);
+      //alert(1)
     },
+    // actived(){
+    //   alert(1)
+    // },
+
     mounted(){
 
       //alert(this.$route.query.sendLineName)

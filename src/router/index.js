@@ -17,7 +17,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/busjiankong',
+      path: '/',
       name: '车辆监控',
       component: busjiankong
     },

@@ -2,11 +2,11 @@
   <div id="app" > <!--导航条-->
     <el-menu class="el-menu-demo" mode="horizontal" background-color="#1f2d3d" text-color="#fff"
              active-text-color="#00a2ff" router>
-      <el-menu-item index="/busjiankong">
+      <el-menu-item index="/">
         <img src="../static/logo.png"/>
       </el-menu-item>
 
-        <el-menu-item index="/busjiankong" class="el-menu-item-demo">
+        <el-menu-item index="/" class="el-menu-item-demo">
           <i class="fa fa-video-camera" aria-hidden="true"></i>
           <span>车辆监控</span>
         </el-menu-item>

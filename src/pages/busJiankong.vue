@@ -109,31 +109,31 @@
                 <div class="overspeed-title">
                   <span>冀R{{car.vehicleNumber}}</span> {{car.speed}} km/h
 
-                  <!--<div class="overspeed-right">-->
+                  <div class="overspeed-right">
                     <!--<a href="javascript:;" @click="car.showOverSpeed = !car.showOverSpeed" >详细</a>-->
-                    <!--<a href="javascript:;" @click="()=>{showOverSpeedCar(car)}" >定位</a>-->
-                  <!--</div>-->
+                    <a href="javascript:;" @click="()=>{showOverSpeedCar(car)}" >定位</a>
+                  </div>
 
                 </div>
 
-                <!--<div v-if="car.showOverSpeed" class="overspeed-info">-->
+                <div v-if="car.showOverSpeed" class="overspeed-info">
                   <!--<div class="item">-->
                     <!--<strong>线路:</strong>{{lines[lines.dict[car.RouteId]].LineName}}-->
                   <!--</div>-->
-                  <!--<div class="item">-->
-                    <!--<strong>车牌号:</strong>{{car.CarCard}}-->
-                  <!--</div>-->
-                  <!--<div class="item">-->
-                    <!--<strong>GPS 速度:</strong>{{car.GPSSpeed}}km/h-->
-                  <!--</div>-->
-                  <!--<div class="item">-->
-                    <!--<strong>上下行:</strong>{{car.UpDown == 1?"下行":"上行"}}</div>-->
+                  <div class="item">
+                    <strong>车牌号:</strong>{{car.vehicleNumber}}
+                  </div>
+                  <div class="item">
+                    <strong>GPS 速度:</strong>{{car.speed}}km/h
+                  </div>
+                  <div class="item">
+                    <strong>上下行:</strong>{{car.upDown == 1?"下行":"上行"}}</div>
                   <!--<div class="item">-->
                     <!--<strong>站点:</strong>{{getStation(car)}}</div>-->
                   <!--<div class="item">-->
                     <!--<strong>下一站:</strong>{{getNextStation(car)}}-->
                   <!--</div>-->
-                <!--</div>-->
+                </div>
 
 
               </li>
@@ -320,7 +320,7 @@
       if(!window.BMap){
         var script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = "http://api.map.baidu.com/api?v=2.0&ak=C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q&callback=mapInit";
+        script.src = "https://api.map.baidu.com/api?v=2.0&ak=C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q&callback=mapInit";
         document.body.appendChild(script);
       }else{
         mapInit()
@@ -373,11 +373,12 @@
             })
           });
 
+          //预警信息
           getBusYujing().then(Response => {
             if(Response.code === '000') {
               this.YujingData = Response.result
-              console.log('this.YujingData')
-              console.log(Response.result.upDaJianJu.name)
+
+
             }
           })
 
@@ -435,7 +436,7 @@
           //   }
           // }) ;
 
-        },3000)
+        },8000)
 
 
 
@@ -489,11 +490,31 @@
 
       },
 
+      //点击车辆定位
+      positionCar(e,car){
+        var that = this;
+
+        var convertor = new BMap.Convertor();
+        var pt = new BMap.Point(car.longitude,car.latitude);
+        convertor.translate([pt], 1, 5, function(item){//转换坐标后定位
+          pt = item.points[0];
+          //定位
+          that.map.centerAndZoom(pt, 16);
+          //创建Car
+          $(e.target).children("input[type=checkbox]").prop("checked","checked");
+          that.createCar(car);
+        });
+
+      },
+
       //定位超速车辆
       showOverSpeedCar(car){
         var that = this;
-        var line = this.lineList[this.lineList.buslist[car.runMethod]];
-        this.$set(line,"show",true);
+        console.log(car)
+        console.log(this.lineList)
+        //var line = this.lineList[this.lineList.buslist[car.runMethod]];
+
+        //this.$set(line,"show",true);
         this.$nextTick(function(){
           var $dom = $("#id"+car.runMethod).find("h2>input[type=checkbox]");
           if(!$dom.prop("checked")){
@@ -508,10 +529,9 @@
               //   $(car.marker.V).trigger("click");
               // },100)
             });
-
-
           }
         })
+
       },
 
       //监控视频
@@ -646,22 +666,7 @@
         // return result;
       },
 
-      //点击车辆定位
-      positionCar(e,car){
-        var that = this;
 
-        var convertor = new BMap.Convertor();
-        var pt = new BMap.Point(car.longitude,car.latitude);
-        convertor.translate([pt], 1, 5, function(item){//转换坐标后定位
-          pt = item.points[0];
-          //定位
-          that.map.centerAndZoom(pt, 16);
-          //创建Car
-          $(e.target).children("input[type=checkbox]").prop("checked","checked");
-          that.createCar(car);
-        });
-
-      },
 
 
 
@@ -731,9 +736,11 @@
         var polylinesPromise = [];
         var convertor = new BMap.Convertor();
         //测试数据
-        var reqdata = 181
-        getBusGuijiEditlineGps(reqdata).then(response => {
+        //var reqdata = 181
+
+        getBusGuijiEditlineGps(line.runMethod).then(response => {
           console.log(response)
+          //debugger
           var resLineData = response.result.newLine
           resLineData.map((item)=>{
             polylines.push(item.lon+","+item.lat)
@@ -970,7 +977,7 @@
     ul,li{list-style-type: none;padding:0;}
     ul{}
     .overspeed-info{background:#ddd; padding:8px;}
-    .overspeed-title{ position:relative; width:215px; border-bottom:1px solid #ddd;padding: 2px 0;
+    .overspeed-title{ position:relative; width:215px; border-bottom:1px solid #000;padding: 2px 0;
       span{ display: inline-block; width:90px;}
       .overspeed-right{position:absolute;right:0; top:2px;}
 

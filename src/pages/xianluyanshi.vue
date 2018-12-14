@@ -766,7 +766,7 @@
       },
       createLushu(busItem,station,resolve){        //创建路书
         var map = this.map;
-        var icon =  new BMap.Icon('http://api.map.baidu.com/library/LuShu/1.2/examples/car.png', new BMap.Size(52,26),{anchor : new BMap.Size(27, 13)});
+        var icon =  new BMap.Icon('https://api.map.baidu.com/library/LuShu/1.2/examples/car.png', new BMap.Size(52,26),{anchor : new BMap.Size(27, 13)});
         var arrPois = busItem.getPath();
         //创建停留站
         var landmarkPois = [];
