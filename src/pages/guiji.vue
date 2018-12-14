@@ -30,7 +30,7 @@
 
       <el-form :inline="true" :model="formInline" >
         <el-form-item>
-          <el-input v-model="formInline.License" placeholder="车牌号"  size="small"></el-input>
+          <el-input v-model="formInline.License" placeholder="请输入车牌号后5位"  size="small"></el-input>
         </el-form-item>
         <el-form-item>
           <el-date-picker size="small" v-model="formInline.Date" placeholder="开始日期" style="width:135px;"></el-date-picker>
@@ -160,6 +160,7 @@
         var date =  new Date(this.formInline.Date).Format("yyyyMMdd");
         var startTime = new Date(this.formInline.StartTime).Format("hhmmss");
         var endTime = new Date(this.formInline.EndTime).Format("hhmmss");
+
         var param = {
           License:this.formInline.License,
           StartTime:date+startTime,
@@ -230,7 +231,7 @@
       if(!window.BMap){
         var script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = "http://api.map.baidu.com/api?v=2.0&ak=C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q&callback=mapInit";
+        script.src = "https://api.map.baidu.com/api?v=2.0&ak=C7kiRgh3qZDHrCbpf9vVGjrN3O9Rf10Q&callback=mapInit";
         document.body.appendChild(script);
       }else{
         mapInit()
@@ -271,20 +272,51 @@
         }
 
       },
+
+      //验证车牌号
+      isVehicleNumber(vehicleNumber) {
+        var result = false;
+        if (vehicleNumber.length == 7){
+          var express = /^[A-Z0-9]{5}$/;
+          result = express.test(vehicleNumber);
+        }
+        return result;
+      },
       searchHandler(){
         var that = this;
 
-        //console.log(this.searchParam)
+        console.log(this.searchParam)
         //debugger
         //let loadingInstance = Loading.service({ fullscreen: true,text:"载入数据"});
+        if(this.searchParam.License==''){
+          Message({
+            message:"请输入正确车牌号,不用加冀R！"
+          });
+          return false
+        }
+
+
+        if(this.formInline.StartTime == ''){
+          Message({
+            message:"请输入开始时间"
+          });
+          return false
+        }
+
+        if(this.formInline.EndTime == ''){
+          Message({
+            message:"请输入结束时间"
+          });
+          return false
+        }
 
         var datarr = {"License":"65037",
           "StartTime":"20180919185512",
           "EndTime":"20180919205056"}
 
-        getBusGuiji(datarr).then(Response => {
+        getBusGuiji(this.searchParam).then(Response => {
           if(Response.code === '000') {
-
+            console.log(Response)
             var data = Response.result
 
             if(data.length<5){
@@ -319,7 +351,9 @@
                   }
                 });
               });
+
               polylinesPromise.push(a);
+
 
             }
 
@@ -331,7 +365,7 @@
                   linePoints.push(new BMap.Point(position.x,position.y));
                 })
               })
-              //console.log(linePoints)
+
               var polyline = new BMap.Polyline(linePoints, {strokeColor:"blue", strokeWeight:5, strokeOpacity:0.5});
               that.map.addOverlay(polyline);   //增加折线
             })
